@@ -4,6 +4,7 @@
     using System.Net.Http;
     using Microsoft.AspNetCore.Mvc;
     using Nacos.AspNetCore;
+    using System.Threading.Tasks;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -25,17 +26,18 @@
 
         // GET api/values/test
         [HttpGet("test")]
-        public ActionResult<string> Test()
+        public async Task<ActionResult<string>> Test()
         {        
-            var baseUrl = _serverManager.GetServerAsync("App2").GetAwaiter().GetResult();
-                       
-            if(string.IsNullOrWhiteSpace(baseUrl))
+            //var baseUrl =  _serverManager.GetServerAsync("App2").GetAwaiter().GetResult();
+            var baseUrl = await _serverManager.GetServerAsync("App2");
+
+            if (string.IsNullOrWhiteSpace(baseUrl))
             {
                 return "empty";
             }
 
             var url = $"{baseUrl}/api/values";
-
+             
             using (HttpClient client = new HttpClient())
             {
                 var result = client.GetAsync(url).GetAwaiter().GetResult();
